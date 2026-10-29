@@ -1,8 +1,10 @@
 name: Release
 
 on:
-  push:
-    branches: [main]
+  # Push-triggered release proposals are disabled: the repository does not
+  # allow GitHub Actions to create pull requests, so every feat/fix push
+  # failed the proposal job. Release preparation still runs on manual
+  # dispatch and on the merge of a release PR.
   pull_request:
     branches: [main]
     types: [closed]
