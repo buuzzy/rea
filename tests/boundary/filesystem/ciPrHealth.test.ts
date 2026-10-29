@@ -427,6 +427,9 @@ it("public CLI uses only GET and produces a report from fixture GitHub responses
       CI_REPOSITORY: "owner/rea",
       CI_REPOSITORY_ID: "11",
       CI_DEFAULT_BRANCH: "main",
+      // Pin the CLI wall clock to the fixture window; the fixture PR was
+      // created 2026-10-13 and would otherwise age out of the 14-day lookback.
+      CI_PR_HEALTH_NOW: new Date(observedAt).toISOString(),
       CI_PR_HEALTH_DIRECTORY: outputDirectory,
       CI_GH_CALLS: ghCalls,
       CI_GH_RESPONSE: ghResponse,

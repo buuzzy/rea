@@ -691,10 +691,14 @@ if (
   resolve(process.argv[1]) === fileURLToPath(import.meta.url)
 ) {
   try {
+    // Deterministic replay hook: fixed wall-clock time for tests and re-runs.
+    // Invalid or absent values fall back to the real current time.
+    const configuredNow = Date.parse(process.env.CI_PR_HEALTH_NOW ?? "");
     const report = await collectPrCiHealth({
       repository: process.env.CI_REPOSITORY,
       repositoryId: process.env.CI_REPOSITORY_ID,
       defaultBranch: process.env.CI_DEFAULT_BRANCH,
+      ...(Number.isFinite(configuredNow) ? { now: configuredNow } : {}),
     });
     const paths = await writePrCiHealthReport(
       report,

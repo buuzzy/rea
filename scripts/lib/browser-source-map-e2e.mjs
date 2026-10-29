@@ -35,7 +35,7 @@ export async function verifyBrowserSourceMap(
       const { stdout } = await promisify(execFile)(
         process.execPath,
         [entrypoint, ...args, "--json"],
-        { env, timeout: 45000, maxBuffer: 16 * 1024 * 1024 },
+        { env, timeout: 120000, maxBuffer: 16 * 1024 * 1024 },
       );
       return parseEvidence(JSON.parse(stdout));
     };
@@ -51,6 +51,9 @@ export async function verifyBrowserSourceMap(
       JSON.stringify({
         browser: { mode: "launch", executable_path: executable },
         start_url: { url: site.origin },
+        // Shared CI runners can take longer than the default 20000 ms just to
+        // start Chrome; give the launch and persistent context real headroom.
+        command_timeout_ms: 90000,
         actions: [
           {
             step_id: "ready",
