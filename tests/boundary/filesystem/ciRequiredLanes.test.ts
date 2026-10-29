@@ -456,7 +456,9 @@ it("keeps fast feedback separate from complete qualification and release proof",
       on: z.object({
         push: z.unknown(),
         pull_request: z.unknown(),
-        schedule: z.array(z.object({ cron: z.string() })),
+        // Scheduled qualification is intentionally disabled for this
+        // low-traffic repository; keep the key absent.
+        schedule: z.array(z.object({ cron: z.string() })).optional(),
         workflow_call: z.object({
           inputs: z.object({
             source_sha: z.object({
@@ -502,10 +504,9 @@ it("keeps fast feedback separate from complete qualification and release proof",
         ),
       ),
     );
-  expect(ci.on.schedule).toEqual([
-    { cron: "23 0-2,4-23 * * *" },
-    { cron: "23 3 * * *" },
-  ]);
+  // Scheduled qualification is intentionally disabled; only push, pull
+  // request, and manual runs remain.
+  expect(ci.on.schedule).toBeUndefined();
   expect(ci.concurrency.group).toContain("'qualification' || 'feedback'");
   expect(ci.concurrency.group).toContain("inputs.source_sha ||");
   expect(ci.concurrency.group).toContain("github.ref");

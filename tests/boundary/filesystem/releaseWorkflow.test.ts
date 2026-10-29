@@ -102,7 +102,11 @@ it("validates the source before release creation and the prepared candidate befo
 
 it("keeps main pushes proposal-only and gates merged-release automation", async () => {
   const workflow = await readReleaseWorkflow();
-  expect(workflow.on.push).toEqual({ branches: ["main"] });
+  // Push-triggered release proposals are intentionally disabled: the
+  // repository does not allow GitHub Actions to create pull requests, so
+  // the proposal job failed on every feat/fix push. Preparation remains
+  // available through manual dispatch and release PR merges.
+  expect(workflow.on.push).toBeUndefined();
   expect(workflow.on.pull_request).toMatchObject({
     types: ["closed"],
     branches: ["main"],
